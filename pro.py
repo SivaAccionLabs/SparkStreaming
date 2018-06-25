@@ -11,12 +11,10 @@ while True:
     data3 = {"id": 3, "name": "siva3", "sallary": 700, "dept_id": 1}
     data4 = {"id": 4, "name": "siva4", "sallary": 1000, "dept_id": 2}
     data5 = {"id": 5, "name": "siva5", "sallary": 200, "dept_id": 3}
-    data6 = {"id": 6, "name": "siva6", "sallary": 500, "dept_id": 3}
     for i in range(3): 
         producer.send(topic, json.dumps(data1))
         producer.send(topic, json.dumps(data2))
         producer.send(topic, json.dumps(data3))
         producer.send(topic, json.dumps(data4))
         producer.send(topic, json.dumps(data5))
-        producer.send(topic, json.dumps(data6))
         time.sleep(5) 

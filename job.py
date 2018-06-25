@@ -52,7 +52,6 @@ if __name__ == '__main__':
     #values.pprint()
     #values.foreachRDD(write_hbase)  
 
-    #actual.pprint()
     #counts = actual.map(lambda x: (json.loads(x)['id'], json.loads(x)['name']))
     #ids = counts.map(lambda x: x[0])
     #names = counts.map(lambda x: x[1])
