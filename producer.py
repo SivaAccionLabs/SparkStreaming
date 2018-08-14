@@ -2,8 +2,8 @@ from kafka import KafkaProducer
 import time
 import json
 
-topic = "siva10"
-broker_list = "10.0.0.92:9092"
+topic = "maple"
+broker_list = "10.0.0.89:9092"
 producer = KafkaProducer(bootstrap_servers = [broker_list])
 while True: 
     data1 = {"id": 1, "name": "siva1", "sallary": 100, "dept_id": 1}
