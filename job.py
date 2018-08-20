@@ -8,15 +8,17 @@ import json
 from operator import add
 import happybase
 
-def write_hbase(rdd):
-    conn = happybase.Connection('54.213.152.242')
+def write_hbase(dept, second_highest_sallary):
+    conn = happybase.Connection('10.0.0.232')
     if conn:
         print "Connectin Established"
-
-    conn.create_table('siva', {'cf': dict()})
-    table = conn.table('siva')
-    for line in rdd.collect():
-        table.put('id'+str(line.id), {'cf:name': line.name}) 
+     
+    try:
+        conn.create_table('s2', {'cf': dict()})
+    except:
+        pass
+    table = conn.table('s2')
+    table.put('dept_'+str(dept), {'cf:name': str(second_highest_sallary)}) 
 
 def second_hieght_sallary(rdd):
     dg = {}
@@ -31,11 +33,13 @@ def second_hieght_sallary(rdd):
     for dept in dg.keys():
         if len(dg[dept]) >=2:
             print str(dept) + " ===>>>" + str(sorted(dg[dept])[1])
+            write_hbase(dept, sorted(dg[dept])[1])
         else:
             print str(dept) + " ===>>>" + str(sorted(dg[dept])[0])
+            write_hbase(dept, sorted(dg[dept])[0])
 
 if __name__ == '__main__':
-    kafka_params = {"metadata.broker.list": "54.218.253.171:9092"}
+    kafka_params = {"metadata.broker.list": "10.0.0.114:9092"}
     sc = SparkContext(appName="sivaApp") 
     ssc = StreamingContext(sc, 5)
     message = KafkaUtils.createDirectStream(ssc, ["maple"], kafka_params)
