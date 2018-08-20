@@ -8,17 +8,24 @@ import json
 from operator import add
 import happybase
 
+hbase_table = "maple"
+hbase_host = "10.0.0.232"
+kafka_broker = "10.0.0.114:9092"
+topic = "maple"
+appName = "LearnApp"
+batch_interval = 5
+
 def write_hbase(dept, second_highest_sallary):
-    conn = happybase.Connection('10.0.0.232')
+    conn = happybase.Connection(hbase_host)
     if conn:
         print "Connectin Established"
      
     try:
-        conn.create_table('s2', {'cf': dict()})
+        conn.create_table(hbase_table, {'cf': dict()})
     except:
         pass
-    table = conn.table('s2')
-    table.put('dept_'+str(dept), {'cf:name': str(second_highest_sallary)}) 
+    table = conn.table(hbase_table)
+    table.put('dept_'+str(dept), {'cf:second_highest_sallary': str(second_highest_sallary)}) 
 
 def second_hieght_sallary(rdd):
     dg = {}
@@ -39,10 +46,10 @@ def second_hieght_sallary(rdd):
             write_hbase(dept, sorted(dg[dept])[0])
 
 if __name__ == '__main__':
-    kafka_params = {"metadata.broker.list": "10.0.0.114:9092"}
-    sc = SparkContext(appName="sivaApp") 
-    ssc = StreamingContext(sc, 5)
-    message = KafkaUtils.createDirectStream(ssc, ["maple"], kafka_params)
+    kafka_params = {"metadata.broker.list": kafka_broker}
+    sc = SparkContext(appName=appName) 
+    ssc = StreamingContext(sc, batch_interval)
+    message = KafkaUtils.createDirectStream(ssc, [topic], kafka_params)
     actual = message.map(lambda x: x[1])
     actual.foreachRDD(second_hieght_sallary)
 
