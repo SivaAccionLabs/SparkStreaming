@@ -22,6 +22,15 @@ topic = "maple"
 appName = "LearningApp"
 batch_interval = 5
 
+def star_decorate(second_hieght_sallary):
+    def star(rdd):
+        print "*"*20
+        print "\n\n"
+        second_hieght_sallary(rdd)
+        print "\n"
+        print "*"*20
+    return star
+
 def write_hbase(dept, second_highest_sallary):
     conn = happybase.Connection(hbase_host)
     if not conn:
@@ -34,6 +43,7 @@ def write_hbase(dept, second_highest_sallary):
     table = conn.table(hbase_table)
     table.put('dept_'+str(dept), {'cf:second_highest_sallary': str(second_highest_sallary)}) 
 
+@star_decorate
 def second_hieght_sallary(rdd):
     dg = {}
     for line in rdd.collect():
@@ -44,7 +54,6 @@ def second_hieght_sallary(rdd):
             dg[line['dept_id']] = []
             dg[line['dept_id']].append(line['sallary'])
 
-    print "*"*20
     print "\n"
     for dept in dg.keys():
         if len(dg[dept]) >=2:
@@ -53,8 +62,6 @@ def second_hieght_sallary(rdd):
         else:
             print "Dept-" + str(dept) + " ===>>> " + str(sorted(dg[dept])[0])
             write_hbase(dept, sorted(dg[dept])[0])
-    print "\n"
-    print "*"*20
 
 if __name__ == '__main__':
 
