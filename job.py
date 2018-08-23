@@ -5,13 +5,14 @@ To run
 
 """
 import sys
+import json
 from operator import add
+
 from pyspark import SparkContext
 from pyspark.streaming import StreamingContext
 from pyspark.streaming.kafka import KafkaUtils
 from pyspark.sql import *
-import json
-from operator import add
+
 import happybase
 
 hbase_table = "maple"
