@@ -1,3 +1,9 @@
+"""
+
+To run
+  spark-submit --jars <required jars> job.py
+
+"""
 import sys
 from operator import add
 from pyspark import SparkContext
@@ -9,10 +15,10 @@ from operator import add
 import happybase
 
 hbase_table = "maple"
-hbase_host = "10.0.0.232"
-kafka_broker = "10.0.0.114:9092"
+hbase_host = "10.0.0.114"
+kafka_broker = "10.0.0.206:9092"
 topic = "maple"
-appName = "LearnApp"
+appName = "LearningApp"
 batch_interval = 5
 
 def write_hbase(dept, second_highest_sallary):
@@ -46,12 +52,25 @@ def second_hieght_sallary(rdd):
             write_hbase(dept, sorted(dg[dept])[0])
 
 if __name__ == '__main__':
+
     kafka_params = {"metadata.broker.list": kafka_broker}
+
+    # Create a SparkContext
     sc = SparkContext(appName=appName) 
+
+    # Create a StreamingContext
     ssc = StreamingContext(sc, batch_interval)
+
+    # Create a DStream
     message = KafkaUtils.createDirectStream(ssc, [topic], kafka_params)
+
+    # Parse the actual message
     actual = message.map(lambda x: x[1])
+
+    # Call the actual logic function
     actual.foreachRDD(second_hieght_sallary)
 
+    # Start the computation
     ssc.start()
+    # Wait for the computation to terminate
     ssc.awaitTermination()
