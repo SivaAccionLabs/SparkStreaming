@@ -23,8 +23,8 @@ batch_interval = 5
 
 def write_hbase(dept, second_highest_sallary):
     conn = happybase.Connection(hbase_host)
-    if conn:
-        print "Connectin Established"
+    if not conn:
+        print "Error while Establishing a connection to Hbase"
      
     try:
         conn.create_table(hbase_table, {'cf': dict()})
@@ -43,13 +43,17 @@ def second_hieght_sallary(rdd):
             dg[line['dept_id']] = []
             dg[line['dept_id']].append(line['sallary'])
 
+    print "*"*20
+    print "\n"
     for dept in dg.keys():
         if len(dg[dept]) >=2:
-            print str(dept) + " ===>>>" + str(sorted(dg[dept])[1])
+            print "Dept-" + str(dept) + " ===>>> " + str(sorted(dg[dept])[1])
             write_hbase(dept, sorted(dg[dept])[1])
         else:
-            print str(dept) + " ===>>>" + str(sorted(dg[dept])[0])
+            print "Dept-" + str(dept) + " ===>>> " + str(sorted(dg[dept])[0])
             write_hbase(dept, sorted(dg[dept])[0])
+    print "\n"
+    print "*"*20
 
 if __name__ == '__main__':
 
